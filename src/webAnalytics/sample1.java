@@ -64,6 +64,9 @@ public class sample1 {
 			By by = By.xpath("//span[contains(text(),'SUBMIT')]");
 			wait.until(ExpectedConditions.visibilityOfElementLocated(by));
 			driver.findElement(by).click();
+			
+			//fetch value from data sheet
+			validation.fetchInput();
 
 			// then ask for all the performance logs from this request
 			// one of them will contain the Network.responseReceived method
@@ -92,27 +95,28 @@ public class sample1 {
 							// server
 							String server = headers.getString("server");
 
-							if (server.contains("roxygen-bolt")) {
+							if (server.contains("cafe")) {
 
-								// url
-								System.out.println("Request URL: " + response.getString("url"));
 								String requestURL = decode(response.getString("url"));
 								if (requestURL.contains("?")) {
-									System.out.println(response.toString());
-									String[] list = requestURL.split("\\?")[1].split("&");
-									tagsMap = new HashMap<String, String>();
-									for (String i : list) {
-										String[] tag = i.split("=");
-										try {
-											tagsMap.put(tag[0], tag[1]);
-										} catch (ArrayIndexOutOfBoundsException e) {
-											tagsMap.put(tag[0], "");
+									// url
+									System.out.println("Request URL: " + requestURL);
+									if (requestURL.contains("url")) {
+										String[] list = requestURL.split("\\?")[1].split("&");
+										tagsMap = new HashMap<String, String>();
+										for (String i : list) {
+											String[] tag = i.split("=");
+											try {
+												tagsMap.put(tag[0], tag[1]);
+											} catch (ArrayIndexOutOfBoundsException e) {
+												tagsMap.put(tag[0], "");
+											}
 										}
-									}
-									System.out.println(tagsMap);
+										System.out.println(tagsMap);
 
-									// validation
-									validation.validate(tagsMap);
+										// validation
+										validation.validate(tagsMap);
+									}
 								}
 							}
 						}
