@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -20,10 +21,14 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class sample1 {
-	
-	static HashMap<String, String> tagsMap;
-	public static void main(String[] args) throws Exception {
+
+	HashMap<String, String> tagsMap;
+
+	@Test
+	public void mainMethod() throws Exception {
 		// simple page (without many resources so that the output is
 		// easy to understand
 		String url = "https://www.awwwards.com/submit/";
@@ -32,7 +37,7 @@ public class sample1 {
 	}
 
 	@SuppressWarnings("deprecation")
-	private static void tracing(String url) throws Exception {
+	private void tracing(String url) throws Exception {
 		ChromeDriver driver = null;
 
 		try {
@@ -60,48 +65,37 @@ public class sample1 {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(by));
 			driver.findElement(by).click();
 
-			String currentURL = driver.getCurrentUrl();
-
 			// then ask for all the performance logs from this request
 			// one of them will contain the Network.responseReceived method
 			// and we shall find the "last recorded url" response
-			System.out.println("****************");
+			System.out.println("**** Type of Logs ****");
 			System.out.println(driver.manage().logs().getAvailableLogTypes().toString());
-			System.out.println("****************");
 			LogEntries logs = driver.manage().logs().get("performance");
-//			System.out.println("\nList of log entries:\n");
+			System.out.println("\nlog entries under performance log type:\n");
 			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
 				LogEntry entry = it.next();
 
 				try {
 					JSONObject json = new JSONObject(entry.getMessage());
-//					System.out.println(json.toString());
 					JSONObject message = json.getJSONObject("message");
 					String method = message.getString("method");
 					String methodName = "Network.responseReceived";
 
 					if (method != null) {
 						if (methodName.equalsIgnoreCase(method)) {
-//							System.out.println(method);
-							JSONObject params = message.getJSONObject("params");
-
 							// response
-							JSONObject response = params.getJSONObject("response");
-//							System.out.println(response.toString());
+							JSONObject response = message.getJSONObject("params").getJSONObject("response");
 
 							// headers
-//							JSONObject headers = (JSONObject) response.get("headers");
-							JSONObject headers = response.getJSONObject("headers");
-//							System.out.println(headers.toString());
+							JSONObject headers = (JSONObject) response.get("headers");
 
 							// server
 							String server = headers.getString("server");
-//							System.out.println(server);
 
 							if (server.contains("roxygen-bolt")) {
-								
-								//url
-//								System.out.println(response.getString("url"));
+
+								// url
+								System.out.println("Request URL: " + response.getString("url"));
 								String requestURL = decode(response.getString("url"));
 								if (requestURL.contains("?")) {
 									System.out.println(response.toString());
@@ -116,11 +110,8 @@ public class sample1 {
 										}
 									}
 									System.out.println(tagsMap);
-//									for(String a: tagsMap.keySet()) {
-//										System.out.println("key: "+a+" value: "+tagsMap.get(a));
 
-//									}
-									//validation
+									// validation
 									validation.validate(tagsMap);
 								}
 							}
@@ -129,7 +120,6 @@ public class sample1 {
 
 				} catch (JSONException e) {
 
-//					e.printStackTrace();
 				}
 
 			}
