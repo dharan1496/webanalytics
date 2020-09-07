@@ -28,7 +28,7 @@ public class validation {
 		wb.close();
 		for(String j: input.keySet()) {
 			String value = data.get(j);
-			Assert.assertEquals(value, j);
+			Assert.assertEquals(value, input.get(j));
 		}
 	}
 }
