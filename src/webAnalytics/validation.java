@@ -17,7 +17,7 @@ public class validation {
 	@SuppressWarnings("deprecation")
 	public static void validate(HashMap<String, String> data) throws Exception {
 		//fetching value from data sheet and put it in hash map and validate it
-		XSSFWorkbook wb = new XSSFWorkbook(new File("C:\\Users\\DELL\\eclipse-workspace\\webAnalytics\\InputData\\inputData.xlsx"));
+		XSSFWorkbook wb = new XSSFWorkbook(new File(".\\InputData\\inputData.xlsx"));
 		XSSFSheet sheet = wb.getSheet("submitSite");
 		HashMap<String, String> input = new HashMap<String, String>();
 		int columnCount = sheet.getRow(0).getLastCellNum();
